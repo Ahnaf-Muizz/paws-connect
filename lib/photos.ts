@@ -12,3 +12,11 @@ export const SITE_PHOTOS = {
   dental: unsplash("1591946614720-90a587da4a36"),
   puppy: unsplash("1576201836106-db1758fd1c97"),
 };
+
+export const HERO_SLIDES = [
+  { src: "/hero/adoption-day.jpg", alt: "Two adopters carrying their new rescue dogs over their shoulders in a sunny park" },
+  { src: "/hero/family-walk.jpg", alt: "A father and daughter walking their spotted rescue dog through a park at sunset" },
+  { src: "/hero/cat-cuddle.jpg", alt: "A woman holding her adopted orange tabby cat on her shoulder outdoors" },
+  { src: "/hero/puppy-hug.jpg", alt: "A young man kneeling in his backyard as his new puppy licks his face" },
+  { src: "/hero/senior-dog.jpg", alt: "An older couple on a park bench with their senior golden retriever resting between them" },
+];

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { asc, gte } from "drizzle-orm";
 import {
@@ -18,9 +17,10 @@ import {
   Stethoscope,
   Users,
 } from "lucide-react";
+import { HeroSlideshow } from "@/components/hero-slideshow";
 import { PetCard } from "@/components/pets/pet-card";
 import { getDb, schema } from "@/lib/db";
-import { SITE_PHOTOS } from "@/lib/photos";
+import { HERO_SLIDES } from "@/lib/photos";
 import { getStats, listPets, listShelters } from "@/lib/queries";
 import { eventDate, eventTime } from "@/lib/utils";
 
@@ -104,17 +104,7 @@ export default async function HomePage() {
             </ul>
           </div>
           <div className="relative mx-auto w-full max-w-xl">
-            <div className="relative aspect-4/3 overflow-hidden rounded-3xl bg-primary-100 dark:bg-slate-800">
-              <Image
-                src={SITE_PHOTOS.heroDogs}
-                alt="Two happy dogs running across a field"
-                fill
-                loading="eager"
-                fetchPriority="high"
-                sizes="(min-width: 1024px) 560px, 100vw"
-                className="object-cover"
-              />
-            </div>
+            <HeroSlideshow slides={HERO_SLIDES} sizes="(min-width: 1024px) 560px, 100vw" label="Families with their adopted pets" />
             <div className="card absolute -bottom-5 left-4 flex items-center gap-3 p-3 sm:-left-6">
               <span className="flex size-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300">
                 <BadgeCheck className="size-6" aria-hidden />
