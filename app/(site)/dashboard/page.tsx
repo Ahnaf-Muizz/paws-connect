@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BadgeCheck, CheckCircle2, ClipboardList, Heart, Inbox, MessageCircle, PawPrint, Plus, Receipt, Settings2, Sparkles } from "lucide-react";
+import { BadgeCheck, CalendarClock, CheckCircle2, ClipboardList, Heart, Inbox, MessageCircle, PawPrint, Plus, Receipt, Settings2, Sparkles } from "lucide-react";
 import { ApplicationButtons, AutoRefresh, DeletePetButton, PetStatusSelect } from "@/components/dashboard/dashboard-actions";
 import { ScreeningSteps } from "@/components/dashboard/screening-steps";
 import { PetImage } from "@/components/pets/pet-image";
 import { Badge } from "@/components/ui";
 import { requireUser } from "@/lib/auth";
-import { getOwner, getProfile, listMyApplications, listOrders, listReceivedApplications } from "@/lib/queries";
+import { APPOINTMENT_KIND_META } from "@/lib/appointments";
+import { getOwner, getProfile, listAppointmentsForUser, listMyApplications, listOrders, listReceivedApplications } from "@/lib/queries";
+import { APPLICATION_KIND_META } from "@/lib/validators";
 import type { ScreeningState } from "@/lib/screening";
-import { money, shortDate, timeAgo } from "@/lib/utils";
+import { eventDate, eventTime, money, shortDate, timeAgo } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
 
@@ -29,15 +31,16 @@ function SectionTitle({ id, icon: Icon, title, count, action }: { id: string; ic
   );
 }
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ applied?: string }> }) {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ applied?: string; booked?: string }> }) {
   const user = await requireUser("/dashboard");
-  const [sp, mine, received, owner, orders, profile] = await Promise.all([
+  const [sp, mine, received, owner, orders, profile, visits] = await Promise.all([
     searchParams,
     listMyApplications(user.id),
     listReceivedApplications(user.id),
     getOwner(user.id),
     listOrders(user.id),
     getProfile(user.id),
+    listAppointmentsForUser(user.id),
   ]);
   const myPets = owner?.pets ?? [];
   const screeningActive = [...mine, ...received].some((a) => !a.screening.complete && (a.screening.status === "submitted" || a.screening.status === "screening"));
@@ -63,6 +66,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           </Link>
         </div>
       </div>
+
+      {sp.booked && (
+        <div role="status" className="mb-6 flex gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100">
+          <CalendarClock className="size-6 shrink-0" aria-hidden />
+          <div>
+            <p className="font-semibold">Appointment booked</p>
+            <p className="text-sm">The owner can see the visit on their dashboard. Times are simulated for this demo.</p>
+          </div>
+        </div>
+      )}
 
       {sp.applied && (
         <div role="status" className="mb-6 flex gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100">
@@ -130,6 +143,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                       </p>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         <StatusBadge s={screening} />
+                        <Badge tone="neutral">{APPLICATION_KIND_META[application.kind]?.label ?? application.kind}</Badge>
+                        {application.duration && <Badge tone="neutral">{application.duration}</Badge>}
                         {application.matchScore !== null && <Badge tone="primary">{application.matchScore}% match</Badge>}
                       </div>
                     </div>
@@ -174,8 +189,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         {pet.breed} &middot; applied {shortDate(application.createdAt)}
                       </p>
-                      <div className="mt-2">
+                      <div className="mt-2 flex flex-wrap gap-1.5">
                         <StatusBadge s={screening} />
+                        <Badge tone="neutral">{APPLICATION_KIND_META[application.kind]?.label ?? application.kind}</Badge>
+                        {application.duration && <Badge tone="neutral">{application.duration}</Badge>}
                       </div>
                     </div>
                   </div>
@@ -241,6 +258,42 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                       Edit
                     </Link>
                     <DeletePetButton id={pet.id} name={pet.name} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section aria-labelledby="visits">
+          <SectionTitle id="visits" icon={CalendarClock} title="Appointments" count={visits.length} />
+          {visits.length === 0 ? (
+            <p className="card p-6 text-sm text-slate-600 dark:text-slate-400">
+              Book a meet-and-greet from any available pet page.
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {visits.map(({ appointment, pet, requester }) => (
+                <li key={appointment.id} className="card flex gap-3 p-4">
+                  <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+                    <PetImage src={pet.photos[0]} alt={pet.name} species={pet.species} sizes="56px" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold">
+                      {APPOINTMENT_KIND_META[appointment.kind].label} with{" "}
+                      <Link href={`/pets/${pet.id}`} className="link">
+                        {pet.name}
+                      </Link>
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {eventDate(appointment.scheduledAt)} · {eventTime(appointment.scheduledAt)}
+                      {appointment.requesterId !== user.id ? ` · ${requester.name}` : ""}
+                    </p>
+                    <div className="mt-2">
+                      <Badge tone={appointment.status === "confirmed" ? "success" : appointment.status === "cancelled" ? "neutral" : "warning"}>
+                        {appointment.status}
+                      </Badge>
+                    </div>
                   </div>
                 </li>
               ))}

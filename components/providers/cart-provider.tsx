@@ -10,6 +10,8 @@ export type CartLine = {
   provider: string;
   category: string;
   priceCents: number;
+  listPriceCents?: number;
+  salePct?: number;
   unit: string;
 };
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle2, HandHeart } from "lucide-react";
 import { PrintButton } from "@/components/commerce/print-button";
+import { ProceedsNote } from "@/components/commerce/proceeds-note";
 import { requireUser } from "@/lib/auth";
 import { getOrder } from "@/lib/queries";
 import { money } from "@/lib/utils";
@@ -100,6 +101,12 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
                 <dt>Subtotal</dt>
                 <dd>{money(order.subtotalCents)}</dd>
               </div>
+              {order.discountCents > 0 && (
+                <div className="flex justify-between text-emerald-700 dark:text-emerald-300">
+                  <dt>Coupon {order.couponCode}</dt>
+                  <dd>−{money(order.discountCents)}</dd>
+                </div>
+              )}
               <div className="flex justify-between text-slate-500 dark:text-slate-400">
                 <dt>Tax</dt>
                 <dd>{money(order.taxCents)}</dd>
@@ -111,6 +118,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <dd>{money(order.totalCents)}</dd>
           </div>
         </dl>
+        {!donation && <ProceedsNote className="mt-6" />}
         <p className="mt-6 text-xs text-slate-500 dark:text-slate-400">
           Simulated transaction for demonstration. No card was charged{donation ? " and no tax receipt is issued" : ""}.
         </p>

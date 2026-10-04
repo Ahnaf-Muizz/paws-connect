@@ -2,9 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { APPLICATION_KIND_META, APPLICATION_KINDS } from "@/lib/validators";
+import { cn } from "@/lib/utils";
+
+const DURATIONS = ["A few weeks", "1–3 months", "Until adopted"] as const;
 
 export function ApplyForm({ petId, petName, available }: { petId: number; petName: string; available: boolean }) {
   const router = useRouter();
+  const [kind, setKind] = useState<(typeof APPLICATION_KINDS)[number]>("long-term");
+  const [duration, setDuration] = useState<(typeof DURATIONS)[number]>("1–3 months");
   const [message, setMessage] = useState("");
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +23,12 @@ export function ApplyForm({ petId, petName, available }: { petId: number; petNam
     const res = await fetch("/api/applications", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ petId, message }),
+      body: JSON.stringify({
+        petId,
+        kind,
+        duration: kind === "long-term" ? null : duration,
+        message,
+      }),
     });
     const data = await res.json().catch(() => ({}));
     setBusy(false);
@@ -35,6 +46,52 @@ export function ApplyForm({ petId, petName, available }: { petId: number; petNam
 
   return (
     <form onSubmit={submit} className="card mt-6 space-y-5 p-5 sm:p-6">
+      <fieldset>
+        <legend className="label">Which option works best for you?</legend>
+        <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
+          Choose long-term, short-term, or emergency shelter so the owner knows what you can offer.
+        </p>
+        <div role="radiogroup" aria-label="Placement type" className="grid gap-2">
+          {APPLICATION_KINDS.map((k) => {
+            const meta = APPLICATION_KIND_META[k];
+            const selected = kind === k;
+            return (
+              <button
+                key={k}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setKind(k)}
+                className={cn(
+                  "rounded-2xl border px-4 py-3 text-left transition",
+                  selected
+                    ? "border-primary-600 bg-primary-50 dark:border-primary-400 dark:bg-primary-950"
+                    : "border-slate-200 bg-white hover:border-primary-300 dark:border-slate-700 dark:bg-slate-900",
+                )}
+              >
+                <span className="block font-semibold text-slate-900 dark:text-white">{meta.label}</span>
+                <span className="mt-0.5 block text-sm text-slate-600 dark:text-slate-400">{meta.detail}</span>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      {kind !== "long-term" && (
+        <div>
+          <label htmlFor="duration" className="label">
+            How long can you help?
+          </label>
+          <select id="duration" className="input" value={duration} onChange={(e) => setDuration(e.target.value as (typeof DURATIONS)[number])}>
+            {DURATIONS.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div>
         <label htmlFor="message" className="label">
           Message to the owner

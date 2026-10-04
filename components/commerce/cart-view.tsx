@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { Bone, Minus, Pill, Plus, Scissors, ShieldCheck, ShoppingCart, Stethoscope, Trash2 } from "lucide-react";
+import { ProceedsNote } from "@/components/commerce/proceeds-note";
 import { useCart } from "@/components/providers/cart-provider";
 import { useSession } from "@/components/providers/session-provider";
+import { TAX_RATE } from "@/lib/coupons";
 import { money } from "@/lib/utils";
-
-const TAX_RATE = 0.0825;
 const ICONS: Record<string, typeof Bone> = { insurance: ShieldCheck, food: Bone, clinic: Stethoscope, groomer: Scissors, medicine: Pill };
 
 export function CartView() {
@@ -41,7 +41,17 @@ export function CartView() {
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-slate-900 dark:text-white">{item.name}</p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {item.provider} &middot; {money(item.priceCents)} / {item.unit}
+                  {item.provider} &middot;{" "}
+                  {item.salePct && item.listPriceCents ? (
+                    <>
+                      <span className="mr-1 line-through">{money(item.listPriceCents)}</span>
+                      {money(item.priceCents)} / {item.unit} · {item.salePct}% off
+                    </>
+                  ) : (
+                    <>
+                      {money(item.priceCents)} / {item.unit}
+                    </>
+                  )}
                 </p>
                 <div className="mt-3 flex items-center justify-between gap-3">
                   <div className="flex items-center rounded-xl border border-slate-200 dark:border-slate-700">
@@ -100,6 +110,7 @@ export function CartView() {
         <Link href="/checkout" className="btn btn-primary mt-5 min-h-12 w-full text-base">
           {user ? "Checkout" : "Log in to checkout"}
         </Link>
+        <ProceedsNote className="mt-4" />
         <Link href="/resources" className="btn btn-ghost mt-2 w-full">
           Continue shopping
         </Link>

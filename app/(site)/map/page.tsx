@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MapExplorer, type Place } from "@/components/map/map-explorer";
 import { PageHeader } from "@/components/ui";
+import { readSimulatedLocation } from "@/lib/location-server";
 import { listMapPlaces } from "@/lib/queries";
 
 export const revalidate = 300;
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MapPage() {
-  const { shelters, vets } = await listMapPlaces();
+  const [{ shelters, vets }, origin] = await Promise.all([listMapPlaces(), readSimulatedLocation()]);
   const places: Place[] = [
     ...shelters.map((s) => ({ key: `s${s.id}`, kind: "shelter" as const, name: s.name, address: s.address, phone: s.phone, lat: s.lat, lng: s.lng, href: `/shelters/${s.slug}`, isReal: s.isReal })),
     ...vets.map((v) => ({
@@ -29,7 +30,7 @@ export default async function MapPage() {
   return (
     <div className="container-page pb-10">
       <PageHeader title="Map" description="Shelters, vets, and emergency hospitals across Lubbock and the South Plains." className="py-4 sm:py-8" />
-      <MapExplorer places={places} />
+      <MapExplorer places={places} origin={origin} />
     </div>
   );
 }

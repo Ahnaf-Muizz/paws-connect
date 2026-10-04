@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { PawPrint } from "lucide-react";
+import { SimulatedLocationSelect } from "@/components/location/simulated-location";
 import { PetCard } from "@/components/pets/pet-card";
 import { PetFilters, PetFiltersSidebar } from "@/components/pets/pet-filters";
 import { EmptyState, PageHeader } from "@/components/ui";
 import type { AgeGroup, Level, Size, Species } from "@/lib/db/schema";
-import { listPets } from "@/lib/queries";
+import { withMiles } from "@/lib/location";
+import { readSimulatedLocation } from "@/lib/location-server";
+import { listPetBreeds, listPets } from "@/lib/queries";
 import { AGES, LEVELS, SIZES, SPECIES } from "@/lib/validators";
 
 export const metadata: Metadata = {
@@ -26,18 +29,28 @@ export default async function PetsPage({ searchParams }: { searchParams: SP }) {
   const one = (k: string) => (Array.isArray(sp[k]) ? sp[k]![0] : (sp[k] as string | undefined));
   const sort = one("sort");
   const source = one("source");
-  const rows = await listPets({
-    q: one("q")?.slice(0, 60),
-    species: pick<Species>(sp.species, SPECIES),
-    size: pick<Size>(sp.size, SIZES),
-    age: pick<AgeGroup>(sp.age, AGES),
-    energy: pick<Level>(sp.energy, LEVELS),
-    kids: one("kids") === "1",
-    dogs: one("dogs") === "1",
-    cats: one("cats") === "1",
-    source: source === "owner" || source === "shelter" ? source : undefined,
-    sort: sort === "name" || sort === "age" ? sort : "newest",
-  });
+  const breed = (one("breed")?.split(",") ?? []).filter(Boolean);
+  const within = Number(one("within"));
+  const [origin, breeds, raw] = await Promise.all([
+    readSimulatedLocation(),
+    listPetBreeds(),
+    listPets({
+      q: one("q")?.slice(0, 60),
+      species: pick<Species>(sp.species, SPECIES),
+      size: pick<Size>(sp.size, SIZES),
+      age: pick<AgeGroup>(sp.age, AGES),
+      energy: pick<Level>(sp.energy, LEVELS),
+      breed: breed.length ? breed : undefined,
+      kids: one("kids") === "1",
+      dogs: one("dogs") === "1",
+      cats: one("cats") === "1",
+      source: source === "owner" || source === "shelter" ? source : undefined,
+      sort: sort === "name" || sort === "age" ? sort : "newest",
+    }),
+  ]);
+  let rows = withMiles(raw, origin);
+  if (Number.isFinite(within) && within > 0) rows = rows.filter((r) => r.miles <= within);
+  if (sort === "nearest") rows = [...rows].sort((a, b) => a.miles - b.miles);
 
   return (
     <div className="container-page">
@@ -55,13 +68,16 @@ export default async function PetsPage({ searchParams }: { searchParams: SP }) {
         <aside className="hidden lg:block" aria-label="Filters">
           <div className="sticky top-24">
             <Suspense>
-              <PetFiltersSidebar />
+              <PetFiltersSidebar breeds={breeds} />
             </Suspense>
           </div>
         </aside>
         <div>
           <Suspense>
-            <PetFilters total={rows.length} />
+            <div className="mb-4">
+              <SimulatedLocationSelect current={origin} />
+            </div>
+            <PetFilters total={rows.length} breeds={breeds} />
           </Suspense>
           {rows.length === 0 ? (
             <div className="mt-6">
@@ -76,9 +92,9 @@ export default async function PetsPage({ searchParams }: { searchParams: SP }) {
             <>
               <h2 className="sr-only">Results</h2>
               <ul className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {rows.map(({ pet, owner, shelter }, i) => (
+                {rows.map(({ pet, owner, shelter, miles }, i) => (
                   <li key={pet.id}>
-                    <PetCard pet={pet} owner={owner} shelter={shelter} priority={i < 3} />
+                    <PetCard pet={pet} owner={owner} shelter={shelter} miles={miles} priority={i < 3} />
                   </li>
                 ))}
               </ul>

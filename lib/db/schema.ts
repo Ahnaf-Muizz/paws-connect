@@ -227,6 +227,8 @@ export const orders = pgTable("orders", {
   kind: text("kind").$type<"purchase" | "donation">().notNull().default("purchase"),
   shelterId: integer("shelter_id").references(() => shelters.id, { onDelete: "set null" }),
   subtotalCents: integer("subtotal_cents").notNull(),
+  discountCents: integer("discount_cents").notNull().default(0),
+  couponCode: text("coupon_code"),
   taxCents: integer("tax_cents").notNull(),
   totalCents: integer("total_cents").notNull(),
   cardBrand: text("card_brand").notNull(),
@@ -353,6 +355,25 @@ export const reviews = pgTable(
   (t) => [index("reviews_target_idx").on(t.targetType, t.targetId)],
 );
 
+export const appointments = pgTable(
+  "appointments",
+  {
+    id: serial("id").primaryKey(),
+    petId: integer("pet_id")
+      .notNull()
+      .references(() => pets.id, { onDelete: "cascade" }),
+    requesterId: integer("requester_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: text("kind").$type<AppointmentKind>().notNull().default("meet-greet"),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
+    notes: text("notes"),
+    status: text("status").$type<AppointmentStatus>().notNull().default("requested"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("appointments_pet_idx").on(t.petId), index("appointments_requester_idx").on(t.requesterId)],
+);
+
 export const healthRecords = pgTable("health_records", {
   id: serial("id").primaryKey(),
   petId: integer("pet_id")
@@ -378,3 +399,4 @@ export type LostFound = typeof lostFound.$inferSelect;
 export type Event = typeof events.$inferSelect;
 export type Review = typeof reviews.$inferSelect;
 export type HealthRecord = typeof healthRecords.$inferSelect;
+export type Appointment = typeof appointments.$inferSelect;

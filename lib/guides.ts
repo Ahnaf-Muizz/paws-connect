@@ -217,6 +217,167 @@ export const GUIDES: Guide[] = [
       },
     ],
   },
+  {
+    slug: "active-dog-care",
+    title: "Caring for an active dog",
+    summary: "How to keep a high-energy dog happy without wrecking your house — or their joints.",
+    category: "New pet",
+    minutes: 4,
+    sections: [
+      {
+        heading: "Exercise that actually works",
+        list: [
+          "Two decent outings beat one exhausted weekend hike. Aim for a morning walk and an evening play session.",
+          "Sniff walks, fetch, and short training games tire a brain as much as a body.",
+          "Skip forced running beside a bike until a vet says growth plates have closed.",
+        ],
+      },
+      {
+        heading: "West Texas specifics",
+        list: [
+          "Walk at sunrise or after sunset from May through September. Pavement burns paws by late morning.",
+          "Carry water. Lubbock wind dries dogs out faster than you think.",
+        ],
+        links: [{ label: "Weather safety guide", href: "/guides/west-texas-weather-safety" }],
+      },
+      {
+        heading: "When you cannot be home",
+        list: [
+          "A midday dog-walker or doggy daycare a few days a week is kinder than a wrecked crate.",
+          "Puzzle feeders and a frozen Kong buy you an hour. They do not replace a walk.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "senior-pet-care",
+    title: "Caring for a senior pet",
+    summary: "Comfort, checkups, and small home changes that help older dogs and cats stay themselves.",
+    category: "New pet",
+    minutes: 4,
+    sections: [
+      {
+        heading: "See the vet sooner",
+        list: [
+          "Senior pets do well with exams twice a year. Bloodwork catches kidney, thyroid, and dental issues early.",
+          "Ask about pain. Limping, hesitation on stairs, and sleeping more can all be arthritis.",
+        ],
+        links: [
+          { label: "Find a vet", href: "/vets" },
+          { label: "Senior food and supplements", href: "/resources?tab=food" },
+        ],
+      },
+      {
+        heading: "Make the house easier",
+        list: [
+          "Ramps or steps for the couch and car save joints.",
+          "Night lights help dogs with fading vision find the door.",
+          "Orthopedic beds beat tile floors, especially in winter.",
+        ],
+      },
+      {
+        heading: "Keep them moving, gently",
+        paragraphs: [
+          "Short daily walks or play keep muscle on. Stop before they are sore, and skip the dog park if they get bowled over.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "rabbit-care",
+    title: "Rabbit care basics",
+    summary: "Hay, housing, and heat — what most first-time rabbit homes get wrong.",
+    category: "New pet",
+    minutes: 4,
+    sections: [
+      {
+        heading: "Diet",
+        list: [
+          "Unlimited timothy hay. Pellets are a measured side dish, not the meal.",
+          "A handful of leafy greens daily. Avoid iceberg lettuce and sugary treats.",
+          "Fresh water in a heavy bowl they cannot tip.",
+        ],
+        links: [{ label: "Rabbit food", href: "/resources?tab=food&species=rabbit" }],
+      },
+      {
+        heading: "Space and safety",
+        list: [
+          "A cage is a bedroom. They need daily free-roam in a bunny-proofed room.",
+          "Cover cords and give cardboard to chew so they do not eat the baseboards.",
+          "Rabbits overheat easily. Keep them in AC during Lubbock summers.",
+        ],
+      },
+      {
+        heading: "Health",
+        list: [
+          "Find a vet who treats rabbits before you have an emergency.",
+          "Not eating for even half a day is urgent. Call an exotic clinic.",
+        ],
+        links: [{ label: "Exotic vets", href: "/vets?species=rabbit" }],
+      },
+    ],
+  },
+  {
+    slug: "bird-care",
+    title: "Bird care basics",
+    summary: "Companion parrots need more than a pretty cage. Here is the short version.",
+    category: "New pet",
+    minutes: 4,
+    sections: [
+      {
+        heading: "Time out of the cage",
+        list: [
+          "A cage is for sleep and safety. Budget several hours of supervised time on a play stand.",
+          "Foraging toys and short training sessions prevent screaming from boredom.",
+        ],
+      },
+      {
+        heading: "Food and air",
+        list: [
+          "A formulated pellet plus vegetables beats an all-seed diet.",
+          "Never use nonstick pans around birds. Overheated Teflon fumes can kill them quickly.",
+          "Avocado, chocolate, caffeine, and alcohol are toxic.",
+        ],
+        links: [{ label: "Bird food", href: "/resources?tab=food&species=bird" }],
+      },
+      {
+        heading: "A decades-long roommate",
+        paragraphs: [
+          "Many parrots outlive the person who adopted them. Write down who would take them if you move, and find an avian vet now, not during an emergency.",
+        ],
+        links: [{ label: "Avian vets", href: "/vets?species=bird" }],
+      },
+    ],
+  },
+  {
+    slug: "first-week-home",
+    title: "Your first week with a new pet",
+    summary: "A simple checklist so the first seven days are quiet, safe, and boring in the best way.",
+    category: "New pet",
+    minutes: 3,
+    sections: [
+      {
+        heading: "Day one",
+        list: [
+          "Keep the house calm. Skip the welcome party and the dog park.",
+          "Show them the water, the potty spot or litter box, and a safe bed.",
+          "Feed the same food they were eating, even if you plan to switch later.",
+        ],
+      },
+      {
+        heading: "Days two through seven",
+        list: [
+          "Same wake, walk, and meal times every day.",
+          "Book a vet visit and transfer the microchip into your name.",
+          "Introduce other pets slowly. See the introductions guide.",
+        ],
+        links: [
+          { label: "Introducing pets", href: "/guides/introducing-pets" },
+          { label: "Estimate monthly costs", href: "/cost-estimator" },
+        ],
+      },
+    ],
+  },
 ];
 
 export const getGuide = (slug: string) => GUIDES.find((g) => g.slug === slug) ?? null;

@@ -15,11 +15,14 @@ import {
   Syringe,
   X,
 } from "lucide-react";
+import { BreedCare } from "@/components/pets/breed-care";
 import { FavoriteButton } from "@/components/pets/favorite-button";
 import { PetActions } from "@/components/pets/pet-actions";
 import { PetImage } from "@/components/pets/pet-image";
 import { ShareButton } from "@/components/share-button";
 import { Badge } from "@/components/ui";
+import { formatMiles, haversineMiles } from "@/lib/location";
+import { readSimulatedLocation } from "@/lib/location-server";
 import { formatAge, SPECIES_LABEL } from "@/lib/pets";
 import { getPet } from "@/lib/queries";
 import { initials, money, shortDate, telHref } from "@/lib/utils";
@@ -74,8 +77,9 @@ function Trait({ ok, label }: { ok: boolean; label: string }) {
 const RECORD_ICON = { vaccine: Syringe, checkup: Stethoscope, medication: HeartPulse, procedure: HeartPulse };
 
 export default async function PetPage({ params }: { params: Params }) {
-  const { pet, owner, shelter, health } = await load(params);
+  const [{ pet, owner, shelter, health }, origin] = await Promise.all([load(params), readSimulatedLocation()]);
   const available = pet.status === "available";
+  const miles = haversineMiles(origin, pet);
 
   return (
     <div className="container-page pb-28 lg:pb-0">
@@ -135,7 +139,7 @@ export default async function PetPage({ params }: { params: Params }) {
               {pet.energy} energy
             </Badge>
             <Badge tone="neutral">
-              <MapPin className="size-3.5" aria-hidden /> {pet.city}
+              <MapPin className="size-3.5" aria-hidden /> {pet.city} · {formatMiles(miles)}
             </Badge>
             <Badge tone="neutral">Care ~${pet.monthlyCost}/mo</Badge>
             <Badge tone={pet.adoptionFee ? "neutral" : "success"}>
@@ -216,6 +220,17 @@ export default async function PetPage({ params }: { params: Params }) {
             )}
           </section>
 
+          <BreedCare
+            name={pet.name}
+            breed={pet.breed}
+            species={pet.species}
+            size={pet.size}
+            energy={pet.energy}
+            ageGroup={pet.ageGroup}
+            needsYard={pet.needsYard}
+            goodWithKids={pet.goodWithKids}
+          />
+
           <section className="mt-8 grid gap-6 sm:grid-cols-2" aria-label="Compatibility and health">
             <div className="card p-5">
               <h2 className="font-semibold">Compatibility</h2>
@@ -280,12 +295,17 @@ export default async function PetPage({ params }: { params: Params }) {
             <div className="min-w-0 flex-1">
               <p className="truncate font-semibold text-slate-900 dark:text-white">{pet.name}</p>
               <p className="truncate text-xs text-slate-500 dark:text-slate-400">
-                {pet.breed} &middot; {pet.city}
+                {pet.breed} &middot; {formatMiles(miles)}
               </p>
             </div>
-            <Link href={`/pets/${pet.id}/apply`} className="btn btn-primary shrink-0 px-5">
-              Apply to adopt
-            </Link>
+            <div className="flex shrink-0 flex-col gap-2">
+              <Link href={`/pets/${pet.id}/apply`} className="btn btn-primary px-5">
+                Apply to adopt
+              </Link>
+              <Link href={`/pets/${pet.id}/appointment`} className="btn btn-outline px-5">
+                Set up an appointment
+              </Link>
+            </div>
           </div>
         </div>
       )}

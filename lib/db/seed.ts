@@ -410,21 +410,21 @@ const REHOME_REASONS = [
 
 type ProductSeed = Omit<typeof s.products.$inferInsert, "id">;
 const PRODUCTS: ProductSeed[] = [
-  { category: "insurance", name: "Accident & Illness Plan", provider: "PawShield Insurance", description: "Covers emergencies, surgeries, cancer, and chronic conditions. 90% reimbursement, $250 deductible.", priceCents: 3200, unit: "per month", species: ["dog", "cat"], tags: ["Most popular", "90% reimbursement"], featured: true },
+  { category: "insurance", name: "Accident & Illness Plan", provider: "PawShield Insurance", description: "Covers emergencies, surgeries, cancer, and chronic conditions. 90% reimbursement, $250 deductible.", priceCents: 3200, salePct: 10, unit: "per month", species: ["dog", "cat"], tags: ["Most popular", "90% reimbursement"], featured: true },
   { category: "insurance", name: "Accident-Only Basic", provider: "Lone Star Pet Protect", description: "Affordable coverage for injuries like broken bones, bite wounds, and swallowed objects.", priceCents: 1200, unit: "per month", species: ["dog", "cat"], tags: ["Budget"] },
-  { category: "insurance", name: "Wellness Add-On", provider: "PawShield Insurance", description: "Reimburses routine care: annual exams, vaccines, dental cleanings, and flea/heartworm prevention.", priceCents: 1800, unit: "per month", species: ["dog", "cat"], tags: ["Routine care"] },
+  { category: "insurance", name: "Wellness Add-On", provider: "PawShield Insurance", description: "Reimburses routine care: annual exams, vaccines, dental cleanings, and flea/heartworm prevention.", priceCents: 1800, salePct: 20, unit: "per month", species: ["dog", "cat"], tags: ["Routine care"] },
   { category: "insurance", name: "Senior Pet Care Plus", provider: "Golden Years Pet Health", description: "Designed for pets 8+. Includes arthritis, kidney disease, and senior bloodwork coverage.", priceCents: 4900, unit: "per month", species: ["dog", "cat"], tags: ["Seniors"] },
   { category: "insurance", name: "Exotic Companion Cover", provider: "Feather & Fur Mutual", description: "Accident and illness coverage for rabbits and birds, including avian vet visits.", priceCents: 1500, unit: "per month", species: ["rabbit", "bird"], tags: ["Exotics"] },
   { category: "insurance", name: "New Adopter 60-Day Starter", provider: "Lone Star Pet Protect", description: "Free-feeling first step: low-cost coverage for your first 60 days home, then cancel or upgrade.", priceCents: 900, unit: "per month", species: ["dog", "cat", "rabbit"], tags: ["New adopters"], featured: true },
-  { category: "food", name: "Prairie Harvest Adult Dog Kibble, 30 lb", provider: "Prairie Harvest", description: "Chicken and brown rice recipe with glucosamine. Made in Texas.", priceCents: 5499, unit: "bag", species: ["dog"], tags: ["Best seller"], featured: true },
+  { category: "food", name: "Prairie Harvest Adult Dog Kibble, 30 lb", provider: "Prairie Harvest", description: "Chicken and brown rice recipe with glucosamine. Made in Texas.", priceCents: 5499, salePct: 15, unit: "bag", species: ["dog"], tags: ["Best seller"], featured: true },
   { category: "food", name: "Puppy Growth Formula, 15 lb", provider: "Prairie Harvest", description: "DHA for brain development and calcium for strong bones.", priceCents: 3899, unit: "bag", species: ["dog"], tags: ["Puppy"] },
   { category: "food", name: "Senior Joint Support Dog Food, 24 lb", provider: "Golden Bowl", description: "Lower calorie with omega-3s and green-lipped mussel for aging joints.", priceCents: 5299, unit: "bag", species: ["dog"], tags: ["Senior"] },
   { category: "food", name: "Grain-Free Salmon Cat Food, 12 lb", provider: "Whisker Kitchen", description: "Wild-caught salmon as the first ingredient. Supports skin and coat.", priceCents: 3499, unit: "bag", species: ["cat"], tags: ["Grain-free"] },
-  { category: "food", name: "Kitten Pate Variety Pack, 24 cans", provider: "Whisker Kitchen", description: "High-protein wet food made for growing kittens.", priceCents: 2799, unit: "case", species: ["cat"], tags: ["Kitten"] },
-  { category: "food", name: "Timothy Hay, 5 lb", provider: "Meadow Bunny", description: "Second-cut, hand-sorted hay. Should make up 80% of a rabbit's diet.", priceCents: 1899, unit: "box", species: ["rabbit"], tags: ["Essential"] },
+  { category: "food", name: "Kitten Pate Variety Pack, 24 cans", provider: "Whisker Kitchen", description: "High-protein wet food made for growing kittens.", priceCents: 2799, salePct: 10, unit: "case", species: ["cat"], tags: ["Kitten"] },
+  { category: "food", name: "Timothy Hay, 5 lb", provider: "Meadow Bunny", description: "Second-cut, hand-sorted hay. Should make up 80% of a rabbit's diet.", priceCents: 1899, salePct: 15, unit: "box", species: ["rabbit"], tags: ["Essential"] },
   { category: "food", name: "Adult Rabbit Pellets, 10 lb", provider: "Meadow Bunny", description: "Timothy-based pellets with no added sugar or seeds.", priceCents: 2299, unit: "bag", species: ["rabbit"], tags: [] },
   { category: "food", name: "Parrot Pellet & Fruit Blend, 4 lb", provider: "Tropic Wing", description: "Balanced nutrition for medium and large parrots.", priceCents: 2699, unit: "bag", species: ["bird"], tags: [] },
-  { category: "food", name: "Freeze-Dried Training Treats", provider: "Good Pup Co.", description: "Single-ingredient chicken liver bites, perfect for training.", priceCents: 1299, unit: "pouch", species: ["dog", "cat"], tags: ["Training"] },
+  { category: "food", name: "Freeze-Dried Training Treats", provider: "Good Pup Co.", description: "Single-ingredient chicken liver bites, perfect for training.", priceCents: 1299, salePct: 25, unit: "pouch", species: ["dog", "cat"], tags: ["Training"] },
   { category: "clinic", name: "Wellness Exam (walk-in)", provider: "PETS Clinic - Lubbock", description: "Low-cost wellness exam at the non-profit PETS Clinic. Price shown is a simulated booking deposit.", priceCents: 2500, unit: "visit", species: ["dog", "cat"], tags: ["Non-profit", "Low cost"], address: "2207 34th St, Lubbock, TX 79411", phone: "(806) 507-0836", featured: true },
   { category: "clinic", name: "Core Vaccine Package", provider: "Caprock Veterinary Hospital", description: "Rabies, DHPP or FVRCP, plus a nose-to-tail exam.", priceCents: 6500, unit: "visit", species: ["dog", "cat"], tags: ["Vaccines"], address: "5502 82nd St, Lubbock, TX 79424", phone: "(806) 555-0110" },
   { category: "clinic", name: "Microchip + Registration", provider: "Tech Terrace Animal Clinic", description: "Lifetime registration included. Takes 5 minutes, no anesthesia needed.", priceCents: 3500, unit: "visit", species: ["dog", "cat", "rabbit"], tags: ["Safety"], address: "2701 23rd St, Lubbock, TX 79410", phone: "(806) 555-0112" },
@@ -432,18 +432,18 @@ const PRODUCTS: ProductSeed[] = [
   { category: "clinic", name: "Senior Bloodwork Panel", provider: "Tech Terrace Animal Clinic", description: "CBC, chemistry, and thyroid screening for pets 7+.", priceCents: 12000, unit: "visit", species: ["dog", "cat"], tags: ["Senior"], address: "2701 23rd St, Lubbock, TX 79410", phone: "(806) 555-0112" },
   { category: "clinic", name: "Exotic Pet Checkup", provider: "Hub City Exotic & Avian Clinic", description: "Exam for rabbits and birds, including nail and beak trims.", priceCents: 5500, unit: "visit", species: ["rabbit", "bird"], tags: ["Exotics"], address: "6610 Indiana Ave, Lubbock, TX 79413", phone: "(806) 555-0113" },
   { category: "clinic", name: "Video Telehealth Consult", provider: "Mobile Paws Vet Care", description: "15-minute video call with a licensed vet for non-emergency questions.", priceCents: 2900, unit: "call", species: ["dog", "cat", "rabbit", "bird"], tags: ["Online"] },
-  { category: "groomer", name: "Full Groom - Small Dog", provider: "Hub City Pet Spa", description: "Bath, haircut, nail trim, ear cleaning, and a bandana.", priceCents: 5500, unit: "appointment", species: ["dog"], tags: ["Popular"], address: "4414 82nd St, Lubbock, TX 79424", phone: "(806) 555-0120", featured: true },
+  { category: "groomer", name: "Full Groom - Small Dog", provider: "Hub City Pet Spa", description: "Bath, haircut, nail trim, ear cleaning, and a bandana.", priceCents: 5500, salePct: 10, unit: "appointment", species: ["dog"], tags: ["Popular"], address: "4414 82nd St, Lubbock, TX 79424", phone: "(806) 555-0120", featured: true },
   { category: "groomer", name: "Full Groom - Large Dog", provider: "Hub City Pet Spa", description: "Everything in the full groom, sized for dogs over 50 lb.", priceCents: 8500, unit: "appointment", species: ["dog"], tags: [], address: "4414 82nd St, Lubbock, TX 79424", phone: "(806) 555-0120" },
-  { category: "groomer", name: "Bath & Brush", provider: "Caprock Clippers", description: "Hydrating bath, blow-dry, and brush-out. No haircut.", priceCents: 3500, unit: "appointment", species: ["dog", "cat"], tags: ["Quick"], address: "1500 Broadway, Lubbock, TX 79401", phone: "(806) 555-0121" },
-  { category: "groomer", name: "Nail Trim", provider: "Caprock Clippers", description: "Walk-in nail trim and file for dogs, cats, and rabbits.", priceCents: 1500, unit: "visit", species: ["dog", "cat", "rabbit"], tags: ["Walk-in"], address: "1500 Broadway, Lubbock, TX 79401", phone: "(806) 555-0121" },
+  { category: "groomer", name: "Bath & Brush", provider: "Caprock Clippers", description: "Hydrating bath, blow-dry, and brush-out. No haircut.", priceCents: 3500, salePct: 20, unit: "appointment", species: ["dog", "cat"], tags: ["Quick"], address: "1500 Broadway, Lubbock, TX 79401", phone: "(806) 555-0121" },
+  { category: "groomer", name: "Nail Trim", provider: "Caprock Clippers", description: "Walk-in nail trim and file for dogs, cats, and rabbits.", priceCents: 1500, salePct: 15, unit: "visit", species: ["dog", "cat", "rabbit"], tags: ["Walk-in"], address: "1500 Broadway, Lubbock, TX 79401", phone: "(806) 555-0121" },
   { category: "groomer", name: "Cat Lion Cut", provider: "Hub City Pet Spa", description: "Gentle shave for long-haired cats with matting. Fear-free handling.", priceCents: 7500, unit: "appointment", species: ["cat"], tags: [], address: "4414 82nd St, Lubbock, TX 79424", phone: "(806) 555-0120" },
   { category: "groomer", name: "Mobile Grooming Visit", provider: "Suds on Wheels", description: "A full groom in our van, parked in your driveway. Great for anxious pets.", priceCents: 9500, unit: "visit", species: ["dog", "cat"], tags: ["Comes to you"] },
   { category: "groomer", name: "De-Shedding Treatment", provider: "Suds on Wheels", description: "Undercoat removal for double-coated breeds like huskies and Samoyeds.", priceCents: 4500, unit: "add-on", species: ["dog"], tags: [] },
-  { category: "medicine", name: "Monthly Heartworm Preventive (6 doses)", provider: "VetDirect Pharmacy", description: "Chewable heartworm prevention. Simulated purchase; real prescriptions require vet approval.", priceCents: 5999, unit: "6-pack", species: ["dog"], tags: ["Rx (simulated)"], featured: true },
+  { category: "medicine", name: "Monthly Heartworm Preventive (6 doses)", provider: "VetDirect Pharmacy", description: "Chewable heartworm prevention. Simulated purchase; real prescriptions require vet approval.", priceCents: 5999, salePct: 15, unit: "6-pack", species: ["dog"], tags: ["Rx (simulated)"], featured: true },
   { category: "medicine", name: "Flea & Tick Chewable (3 months)", provider: "VetDirect Pharmacy", description: "Kills fleas and ticks for 12 weeks. Weight-based dosing.", priceCents: 4999, unit: "3-pack", species: ["dog"], tags: ["Rx (simulated)"] },
   { category: "medicine", name: "Feline Flea Topical (6 months)", provider: "VetDirect Pharmacy", description: "Monthly topical for cats over 8 weeks old.", priceCents: 4499, unit: "6-pack", species: ["cat"], tags: [] },
   { category: "medicine", name: "Hip & Joint Supplement Chews", provider: "Good Pup Co.", description: "Glucosamine, chondroitin, and MSM for mobility.", priceCents: 2799, unit: "90 chews", species: ["dog"], tags: ["Senior"] },
-  { category: "medicine", name: "Probiotic Powder", provider: "Good Pup Co.", description: "Supports digestion during food transitions and stressful moves to a new home.", priceCents: 2199, unit: "30 scoops", species: ["dog", "cat"], tags: ["New home"] },
+  { category: "medicine", name: "Probiotic Powder", provider: "Good Pup Co.", description: "Supports digestion during food transitions and stressful moves to a new home.", priceCents: 2199, salePct: 10, unit: "30 scoops", species: ["dog", "cat"], tags: ["New home"] },
   { category: "medicine", name: "Calming Chews", provider: "Whisker Kitchen", description: "L-theanine and chamomile for car rides, fireworks, and adoption day jitters.", priceCents: 1899, unit: "60 chews", species: ["dog", "cat"], tags: [] },
   { category: "medicine", name: "Ear Cleaning Solution", provider: "VetDirect Pharmacy", description: "Gentle, vet-formulated cleanser for floppy-eared breeds.", priceCents: 1299, unit: "8 oz", species: ["dog", "cat"], tags: [] },
   { category: "medicine", name: "Critical Care Recovery Food", provider: "Meadow Bunny", description: "Syringe-feedable formula for rabbits recovering from illness.", priceCents: 2499, unit: "box", species: ["rabbit"], tags: ["Exotics"] },
@@ -466,15 +466,38 @@ const VET_REVIEWS: [vetIndex: number, rating: number, body: string][] = [
   [9, 4, "Saw us on a Sunday evening. Glad they exist."],
 ];
 
+const SALE_BY_NAME: Record<string, number> = {
+  "Accident & Illness Plan": 10,
+  "Wellness Add-On": 20,
+  "Prairie Harvest Adult Dog Kibble, 30 lb": 15,
+  "Kitten Pate Variety Pack, 24 cans": 10,
+  "Timothy Hay, 5 lb": 15,
+  "Freeze-Dried Training Treats": 25,
+  "Full Groom - Small Dog": 10,
+  "Bath & Brush": 20,
+  "Nail Trim": 15,
+  "Monthly Heartworm Preventive (6 doses)": 15,
+  "Probiotic Powder": 10,
+};
+
+export async function ensureCatalogDeals(db: DB) {
+  for (const [name, salePct] of Object.entries(SALE_BY_NAME)) {
+    await db.update(s.products).set({ salePct }).where(sql`${s.products.name} = ${name}`);
+  }
+}
+
 export async function seed(db: DB, { reset = false } = {}) {
   if (reset) {
     await db.execute(sql`TRUNCATE TABLE
       messages, conversations, health_records, reviews, event_rsvps, events, foster_applications,
-      lost_found, order_items, orders, cart_items, applications, favorites, pet_reactions,
+      lost_found, order_items, orders, cart_items, appointments, applications, favorites, pet_reactions,
       pets, products, vets, shelters, adopter_profiles, users RESTART IDENTITY CASCADE`);
   } else {
     const existing = await db.select({ id: s.users.id }).from(s.users).limit(1);
-    if (existing.length) return;
+    if (existing.length) {
+      await ensureCatalogDeals(db);
+      return;
+    }
   }
 
   const passwordHash = bcrypt.hashSync(DEMO_PASSWORD, 10);
@@ -604,6 +627,7 @@ export async function seed(db: DB, { reset = false } = {}) {
       petId: cocoa.id,
       applicantId: demo.id,
       message: "I have a fenced yard and run three mornings a week. Cocoa sounds like a perfect fit!",
+      kind: "long-term",
       status: "screening",
       matchScore: 88,
       createdAt: new Date(Date.now() - 20 * 60_000),
@@ -612,6 +636,8 @@ export async function seed(db: DB, { reset = false } = {}) {
       petId: teddy.id,
       applicantId: owners[8].id,
       message: "Our kids are 8 and 11 and we've been looking for a low-shedding dog. We'd love to meet Teddy.",
+      kind: "short-term",
+      duration: "1–3 months",
       status: "submitted",
       matchScore: 91,
       createdAt: daysAgo(1),
@@ -620,6 +646,8 @@ export async function seed(db: DB, { reset = false } = {}) {
       petId: pet("Bruno").id,
       applicantId: owners[9].id,
       message: "I work from home and Bruno would be my only dog.",
+      kind: "emergency",
+      duration: "A few weeks",
       status: "approved",
       matchScore: 84,
       decidedAt: daysAgo(2),
@@ -697,4 +725,15 @@ export async function seed(db: DB, { reset = false } = {}) {
     { petId: pet("Shadow").id, kind: "checkup", title: "Kidney panel", date: daysAgo(45), notes: "Stage 1 CKD. Renal diet recommended.", nextDue: daysFromNow(135) },
     { petId: pet("Honey").id, kind: "vaccine", title: "Rabies (3-year)", date: daysAgo(400), nextDue: daysFromNow(695) },
   ]);
+
+  await db.insert(s.appointments).values({
+    petId: cocoa.id,
+    requesterId: demo.id,
+    kind: "meet-greet",
+    scheduledAt: daysFromNow(3, 10),
+    notes: "Mae Simmons Park if the weather is good.",
+    status: "confirmed",
+  });
+
+  await ensureCatalogDeals(db);
 }

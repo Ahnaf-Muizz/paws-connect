@@ -14,10 +14,12 @@ type State = {
   size: string[];
   age: string[];
   energy: string[];
+  breed: string[];
   kids: boolean;
   dogs: boolean;
   cats: boolean;
   source: string;
+  within: string;
   sort: string;
 };
 
@@ -29,10 +31,12 @@ function fromParams(p: URLSearchParams): State {
     size: list("size"),
     age: list("age"),
     energy: list("energy"),
+    breed: list("breed"),
     kids: p.get("kids") === "1",
     dogs: p.get("dogs") === "1",
     cats: p.get("cats") === "1",
     source: p.get("source") ?? "",
+    within: p.get("within") ?? "",
     sort: p.get("sort") ?? "newest",
   };
 }
@@ -40,18 +44,28 @@ function fromParams(p: URLSearchParams): State {
 function toQuery(s: State) {
   const p = new URLSearchParams();
   if (s.q.trim()) p.set("q", s.q.trim());
-  for (const k of ["species", "size", "age", "energy"] as const) if (s[k].length) p.set(k, s[k].join(","));
+  for (const k of ["species", "size", "age", "energy", "breed"] as const) if (s[k].length) p.set(k, s[k].join(","));
   for (const k of ["kids", "dogs", "cats"] as const) if (s[k]) p.set(k, "1");
   if (s.source) p.set("source", s.source);
+  if (s.within) p.set("within", s.within);
   if (s.sort !== "newest") p.set("sort", s.sort);
   const q = p.toString();
   return q ? `?${q}` : "";
 }
 
 const activeCount = (s: State) =>
-  s.species.length + s.size.length + s.age.length + s.energy.length + Number(s.kids) + Number(s.dogs) + Number(s.cats) + Number(!!s.source);
+  s.species.length +
+  s.size.length +
+  s.age.length +
+  s.energy.length +
+  s.breed.length +
+  Number(s.kids) +
+  Number(s.dogs) +
+  Number(s.cats) +
+  Number(!!s.source) +
+  Number(!!s.within);
 
-function FilterFields({ state, set }: { state: State; set: (s: State) => void }) {
+function FilterFields({ state, set, breeds }: { state: State; set: (s: State) => void; breeds: string[] }) {
   const group = (label: string, key: "species" | "size" | "age" | "energy", options: readonly string[]) => (
     <fieldset>
       <legend className="label">{label}</legend>
@@ -70,6 +84,51 @@ function FilterFields({ state, set }: { state: State; set: (s: State) => void })
       {group("Size", "size", SIZES)}
       {group("Age", "age", AGES)}
       {group("Energy level", "energy", LEVELS)}
+      {breeds.length > 0 && (
+        <fieldset>
+          <legend className="label">Breed</legend>
+          <select
+            className="input"
+            value=""
+            aria-label="Add a breed filter"
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v && !state.breed.includes(v)) set({ ...state, breed: [...state.breed, v] });
+            }}
+          >
+            <option value="">Add a breed…</option>
+            {breeds.map((b) => (
+              <option key={b} value={b} disabled={state.breed.includes(b)}>
+                {b}
+              </option>
+            ))}
+          </select>
+          {state.breed.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {state.breed.map((b) => (
+                <ToggleChip key={b} selected onClick={() => set({ ...state, breed: state.breed.filter((x) => x !== b) })}>
+                  {b}
+                </ToggleChip>
+              ))}
+            </div>
+          )}
+        </fieldset>
+      )}
+      <fieldset>
+        <legend className="label">Distance</legend>
+        <div className="flex flex-wrap gap-2">
+          {[
+            ["", "Any"],
+            ["10", "Within 10 mi"],
+            ["25", "Within 25 mi"],
+            ["50", "Within 50 mi"],
+          ].map(([v, l]) => (
+            <ToggleChip key={v || "any"} selected={state.within === v} onClick={() => set({ ...state, within: v })}>
+              {l}
+            </ToggleChip>
+          ))}
+        </div>
+      </fieldset>
       <fieldset>
         <legend className="label">Good with</legend>
         <div className="flex flex-wrap gap-2">
@@ -102,7 +161,7 @@ function FilterFields({ state, set }: { state: State; set: (s: State) => void })
   );
 }
 
-export function PetFilters({ total }: { total: number }) {
+export function PetFilters({ total, breeds }: { total: number; breeds: string[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -159,6 +218,7 @@ export function PetFilters({ total }: { total: number }) {
             onChange={(e) => apply({ ...current, sort: e.target.value })}
           >
             <option value="newest">Newest first</option>
+            <option value="nearest">Nearest first</option>
             <option value="name">Name A-Z</option>
             <option value="age">Youngest first</option>
           </select>
@@ -200,13 +260,13 @@ export function PetFilters({ total }: { total: number }) {
           </div>
         }
       >
-        <FilterFields state={draft} set={setDraft} />
+        <FilterFields state={draft} set={setDraft} breeds={breeds} />
       </BottomSheet>
     </>
   );
 }
 
-export function PetFiltersSidebar() {
+export function PetFiltersSidebar({ breeds }: { breeds: string[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -215,6 +275,7 @@ export function PetFiltersSidebar() {
   return (
     <FilterFields
       state={current}
+      breeds={breeds}
       set={(s) => startTransition(() => router.replace(`${pathname}${toQuery(s)}`, { scroll: false }))}
     />
   );

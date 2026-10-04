@@ -14,7 +14,8 @@ export type PetFilters = {
   dogs?: boolean;
   cats?: boolean;
   source?: "owner" | "shelter";
-  sort?: "newest" | "name" | "age";
+  breed?: string[];
+  sort?: "newest" | "name" | "age" | "nearest";
   includeUnavailable?: boolean;
 };
 
@@ -35,6 +36,7 @@ export async function listPets(f: PetFilters = {}) {
   if (f.cats) where.push(eq(s.pets.goodWithCats, true));
   if (f.source === "owner") where.push(sql`${s.pets.ownerId} is not null`);
   if (f.source === "shelter") where.push(sql`${s.pets.shelterId} is not null`);
+  if (f.breed?.length) where.push(inArray(s.pets.breed, f.breed));
   const order =
     f.sort === "name" ? asc(s.pets.name) : f.sort === "age" ? asc(s.pets.ageYears) : desc(s.pets.createdAt);
 
@@ -65,6 +67,16 @@ export async function getPet(id: number) {
   if (!row) return null;
   const health = await db.select().from(s.healthRecords).where(eq(s.healthRecords.petId, id)).orderBy(desc(s.healthRecords.date));
   return { ...row, health };
+}
+
+export async function listPetBreeds() {
+  const db = await getDb();
+  const rows = await db
+    .selectDistinct({ breed: s.pets.breed })
+    .from(s.pets)
+    .where(ne(s.pets.status, "adopted"))
+    .orderBy(asc(s.pets.breed));
+  return rows.map((r) => r.breed);
 }
 
 export async function getProfile(userId: number) {
@@ -243,6 +255,21 @@ export async function listReceivedApplications(userId: number) {
     .where(eq(s.pets.ownerId, userId))
     .orderBy(desc(s.applications.createdAt));
   return rows.map((r) => ({ ...r, screening: screeningState(r.application) }));
+}
+
+export async function listAppointmentsForUser(userId: number) {
+  const db = await getDb();
+  return db
+    .select({
+      appointment: s.appointments,
+      pet: s.pets,
+      requester: { id: s.users.id, name: s.users.name, city: s.users.city },
+    })
+    .from(s.appointments)
+    .innerJoin(s.pets, eq(s.appointments.petId, s.pets.id))
+    .innerJoin(s.users, eq(s.appointments.requesterId, s.users.id))
+    .where(or(eq(s.appointments.requesterId, userId), eq(s.pets.ownerId, userId)))
+    .orderBy(desc(s.appointments.scheduledAt));
 }
 
 export async function listOrders(userId: number) {

@@ -3,8 +3,10 @@
 import { useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Building2, Crosshair, Phone, Siren, Stethoscope } from "lucide-react";
+import { Building2, Phone, Siren, Stethoscope } from "lucide-react";
+import { SimulatedLocationSelect } from "@/components/location/simulated-location";
 import { ToggleChip } from "@/components/toggle-chip";
+import { formatMiles, haversineMiles, type SimulatedLocation } from "@/lib/location";
 import { cn, telHref } from "@/lib/utils";
 
 export type PlaceKind = "shelter" | "vet" | "emergency";
@@ -21,41 +23,20 @@ export const KIND_META: Record<PlaceKind, { label: string; icon: typeof Building
   emergency: { label: "24/7 emergency", icon: Siren, dot: "bg-rose-600" },
 };
 
-export function MapExplorer({ places }: { places: Place[] }) {
+export function MapExplorer({ places, origin }: { places: Place[]; origin: SimulatedLocation }) {
   const [kinds, setKinds] = useState<PlaceKind[]>(["shelter", "vet", "emergency"]);
   const [selected, setSelected] = useState<string | null>(null);
-  const [me, setMe] = useState<{ lat: number; lng: number } | null>(null);
-  const [locating, setLocating] = useState(false);
-  const [geoError, setGeoError] = useState<string | null>(null);
+  const me = useMemo(() => ({ lat: origin.lat, lng: origin.lng }), [origin.lat, origin.lng]);
   const mapBox = useRef<HTMLDivElement>(null);
 
   const visible = useMemo(() => places.filter((p) => kinds.includes(p.kind)), [places, kinds]);
   const sorted = useMemo(() => {
-    if (!me) return visible;
-    const d = (p: Place) => (p.lat - me.lat) ** 2 + ((p.lng - me.lng) * Math.cos((me.lat * Math.PI) / 180)) ** 2;
-    return [...visible].sort((a, b) => d(a) - d(b));
+    return [...visible].sort((a, b) => haversineMiles(me, a) - haversineMiles(me, b));
   }, [visible, me]);
 
   function show(key: string) {
     setSelected(key);
     if (!window.matchMedia("(min-width: 1024px)").matches) mapBox.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function locate() {
-    if (!navigator.geolocation) return setGeoError("Location isn't available in this browser.");
-    setLocating(true);
-    setGeoError(null);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setMe({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setLocating(false);
-      },
-      () => {
-        setGeoError("Couldn't get your location. Check your browser permissions.");
-        setLocating(false);
-      },
-      { enableHighAccuracy: false, timeout: 10_000 },
-    );
   }
 
   return (
@@ -67,14 +48,9 @@ export function MapExplorer({ places }: { places: Place[] }) {
             {KIND_META[k].label}
           </ToggleChip>
         ))}
-        <button type="button" onClick={locate} disabled={locating} className="btn btn-outline ml-auto min-h-10">
-          <Crosshair className={cn("size-4", locating && "animate-spin")} aria-hidden /> {me ? "Update location" : "Near me"}
-        </button>
-        {geoError && (
-          <p role="alert" className="w-full text-sm text-rose-600 dark:text-rose-400">
-            {geoError}
-          </p>
-        )}
+        <div className="w-full sm:ml-auto sm:w-72">
+          <SimulatedLocationSelect current={origin} />
+        </div>
       </div>
 
       <div ref={mapBox} className="order-first h-[55dvh] scroll-mt-20 min-h-80 lg:order-last lg:h-[calc(100dvh-14rem)]">
@@ -92,7 +68,9 @@ export function MapExplorer({ places }: { places: Place[] }) {
                 </span>
                 <span className="min-w-0">
                   <span className="block font-medium text-slate-900 dark:text-white">{p.name}</span>
-                  <span className="block text-sm text-slate-500 dark:text-slate-400">{p.address}</span>
+                  <span className="block text-sm text-slate-500 dark:text-slate-400">
+                    {p.address} · {formatMiles(haversineMiles(me, p))}
+                  </span>
                 </span>
               </button>
               <div className="mt-2 flex gap-4 pl-11 text-sm">

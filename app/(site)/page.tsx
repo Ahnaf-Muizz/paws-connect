@@ -21,6 +21,8 @@ import { HeroSlideshow } from "@/components/hero-slideshow";
 import { PetCard } from "@/components/pets/pet-card";
 import { getDb, schema } from "@/lib/db";
 import { HERO_SLIDES } from "@/lib/photos";
+import { withMiles } from "@/lib/location";
+import { readSimulatedLocation } from "@/lib/location-server";
 import { getStats, listPets, listShelters } from "@/lib/queries";
 import { eventDate, eventTime } from "@/lib/utils";
 
@@ -55,13 +57,17 @@ const EXPLORE = [
 
 export default async function HomePage() {
   const db = await getDb();
-  const [pets, stats, shelters, events] = await Promise.all([
+  const [pets, stats, shelters, events, origin] = await Promise.all([
     listPets({ sort: "newest" }),
     getStats(),
     listShelters(),
     db.select().from(schema.events).where(gte(schema.events.startsAt, new Date())).orderBy(asc(schema.events.startsAt)).limit(3),
+    readSimulatedLocation(),
   ]);
-  const featured = pets.filter(({ pet }) => pet.status === "available").slice(0, 8);
+  const featured = withMiles(
+    pets.filter(({ pet }) => pet.status === "available").slice(0, 8),
+    origin,
+  );
   const real = shelters.filter((s) => s.shelter.isReal);
   const capacity = real.reduce((n, s) => n + s.shelter.capacity, 0);
   const occupied = real.reduce((n, s) => n + s.shelter.currentCount, 0);
@@ -196,9 +202,9 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="-mx-4 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4">
-          {featured.map(({ pet, owner, shelter }, i) => (
+          {featured.map(({ pet, owner, shelter, miles }, i) => (
             <div key={pet.id} className="w-[78%] shrink-0 snap-start sm:w-auto">
-              <PetCard pet={pet} owner={owner} shelter={shelter} priority={i < 2} />
+              <PetCard pet={pet} owner={owner} shelter={shelter} miles={miles} priority={i < 2} />
             </div>
           ))}
         </div>

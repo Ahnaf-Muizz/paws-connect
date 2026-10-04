@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { salePriceCents } from "./coupons";
 import { schema, type DB } from "./db";
 
 export async function loadCart(db: DB, userId: number) {
@@ -14,9 +15,11 @@ export async function loadCart(db: DB, userId: number) {
     name: product.name,
     provider: product.provider,
     category: product.category,
-    priceCents: product.priceCents,
+    listPriceCents: product.priceCents,
+    salePct: product.salePct,
+    priceCents: salePriceCents(product.priceCents, product.salePct),
     unit: product.unit,
   }));
 }
 
-export const TAX_RATE = 0.0825;
+export { TAX_RATE } from "./coupons";

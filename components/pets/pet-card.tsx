@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BadgeCheck, Building2, MapPin } from "lucide-react";
 import type { Pet } from "@/lib/db/schema";
+import { formatMiles } from "@/lib/location";
 import { formatAge } from "@/lib/pets";
 import { Badge } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ export function PetCard({
   owner,
   shelter,
   score,
+  miles,
   priority,
   showFavorite = true,
 }: {
@@ -19,6 +21,7 @@ export function PetCard({
   owner?: { id: number; name: string; verified: boolean } | null;
   shelter?: { id: number; name: string } | null;
   score?: number;
+  miles?: number;
   priority?: boolean;
   showFavorite?: boolean;
 }) {
@@ -68,7 +71,7 @@ export function PetCard({
         <div className="mt-3 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
           <span className="flex min-w-0 items-center gap-1">
             <MapPin className="size-3.5 shrink-0" aria-hidden />
-            <span className="truncate">{pet.city}</span>
+            <span className="truncate">{miles !== undefined ? `${pet.city} · ${formatMiles(miles)}` : pet.city}</span>
           </span>
           <span className={cn("flex min-w-0 items-center gap-1", owner && "text-primary-700 dark:text-primary-300")}>
             {owner ? (

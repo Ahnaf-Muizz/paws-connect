@@ -15,8 +15,8 @@ export const SITE_PHOTOS = {
 
 export const HERO_SLIDES = [
   { src: "/hero/adoption-day.jpg", alt: "Two adopters carrying their new rescue dogs over their shoulders in a sunny park" },
-  { src: "/hero/family-walk.jpg", alt: "A father and daughter walking their spotted rescue dog through a park at sunset" },
-  { src: "/hero/cat-cuddle.jpg", alt: "A woman holding her adopted orange tabby cat on her shoulder outdoors" },
-  { src: "/hero/puppy-hug.jpg", alt: "A young man kneeling in his backyard as his new puppy licks his face" },
-  { src: "/hero/senior-dog.jpg", alt: "An older couple on a park bench with their senior golden retriever resting between them" },
+  { src: "/hero/family-walk.jpg", alt: "A smiling couple looking at their Italian greyhound standing in a window" },
+  { src: "/hero/cat-cuddle.jpg", alt: "A fluffy tabby cat nuzzling a golden retriever in the grass" },
+  { src: "/hero/puppy-hug.jpg", alt: "A golden retriever puppy sitting outdoors holding a white tulip" },
+  { src: "/hero/senior-dog.jpg", alt: "A golden retriever looking at the camera against a blue background" },
 ];

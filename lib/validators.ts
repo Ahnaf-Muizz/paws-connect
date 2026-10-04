@@ -57,9 +57,25 @@ export const PetInput = z.object({
   city: z.string().trim().min(2).max(80),
 });
 
+export const APPLICATION_KINDS = ["long-term", "short-term", "emergency"] as const;
+export const APPLICATION_KIND_META: Record<(typeof APPLICATION_KINDS)[number], { label: string; detail: string }> = {
+  "long-term": { label: "Long-term", detail: "A forever home. You plan to keep this pet as part of your family." },
+  "short-term": { label: "Short-term", detail: "Foster or temporary care while a permanent home is found." },
+  emergency: { label: "Emergency shelter", detail: "A safe place right away if they cannot stay where they are tonight." },
+};
+
 export const ApplicationInput = z.object({
   petId: z.number().int().positive(),
+  kind: z.enum(APPLICATION_KINDS),
+  duration: z.string().trim().max(40).optional().nullable(),
   message: z.string().trim().min(20, "Tell the owner a little about your home (20+ characters)").max(2000),
+});
+
+export const AppointmentInput = z.object({
+  petId: z.number().int().positive(),
+  kind: z.enum(["meet-greet", "video", "home-visit"]),
+  scheduledAt: z.string().refine((d) => !Number.isNaN(Date.parse(d)), "Pick a valid time"),
+  notes: z.string().trim().max(500).optional().nullable(),
 });
 
 export const LostFoundInput = z.object({

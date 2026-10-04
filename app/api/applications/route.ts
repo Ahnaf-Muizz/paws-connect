@@ -15,7 +15,7 @@ export const GET = route(async (req) => {
 
 export const POST = route(async (req) => {
   const user = await requireApiUser();
-  const { petId, message } = ApplicationInput.parse(await readJson(req));
+  const { petId, message, kind, duration } = ApplicationInput.parse(await readJson(req));
   const db = await getDb();
   const [pet] = await db.select().from(schema.pets).where(eq(schema.pets.id, petId)).limit(1);
   if (!pet) throw new HttpError(404, "Pet not found");
@@ -31,7 +31,14 @@ export const POST = route(async (req) => {
   const match = await scoreForUser(user.id, pet);
   const [application] = await db
     .insert(schema.applications)
-    .values({ petId, applicantId: user.id, message, matchScore: match?.score ?? null })
+    .values({
+      petId,
+      applicantId: user.id,
+      message,
+      kind,
+      duration: kind === "long-term" ? null : duration || null,
+      matchScore: match?.score ?? null,
+    })
     .returning();
   return json({ application }, { status: 201 });
 });

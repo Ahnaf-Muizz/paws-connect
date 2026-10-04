@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle2, MessageCircle, Pencil, Sparkles } from "lucide-react";
+import { AlertTriangle, CalendarClock, CheckCircle2, MessageCircle, Pencil, Sparkles } from "lucide-react";
 import { useSession } from "@/components/providers/session-provider";
 import { matchLabel, type MatchResult } from "@/lib/matching";
 import { cn } from "@/lib/utils";
@@ -104,9 +104,14 @@ export function PetActions({
           <CheckCircle2 className="size-4 text-emerald-500" aria-hidden /> Applied: {info.application.label}
         </Link>
       ) : available ? (
-        <Link href={`/pets/${petId}/apply`} className="btn btn-primary min-h-12 w-full text-base">
-          Apply to adopt {petName}
-        </Link>
+        <div className="space-y-2">
+          <Link href={`/pets/${petId}/apply`} className="btn btn-primary min-h-12 w-full text-base">
+            Apply to adopt {petName}
+          </Link>
+          <Link href={`/pets/${petId}/appointment`} className="btn btn-outline min-h-12 w-full text-base">
+            <CalendarClock className="size-4" aria-hidden /> Set up an appointment
+          </Link>
+        </div>
       ) : (
         <p className="btn btn-outline w-full cursor-default">Not accepting applications</p>
       )}
