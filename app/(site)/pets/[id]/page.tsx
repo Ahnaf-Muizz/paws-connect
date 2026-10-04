@@ -27,11 +27,7 @@ import { formatAge, SPECIES_LABEL } from "@/lib/pets";
 import { getPet } from "@/lib/queries";
 import { initials, money, shortDate, telHref } from "@/lib/utils";
 
-export const revalidate = 300;
-
-export function generateStaticParams() {
-  return [];
-}
+export const dynamic = "force-dynamic";
 
 type Params = Promise<{ id: string }>;
 

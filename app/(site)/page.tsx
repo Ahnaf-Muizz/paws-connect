@@ -26,7 +26,7 @@ import { readSimulatedLocation } from "@/lib/location-server";
 import { getStats, listPets, listShelters } from "@/lib/queries";
 import { eventDate, eventTime } from "@/lib/utils";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const STEPS = [
   {

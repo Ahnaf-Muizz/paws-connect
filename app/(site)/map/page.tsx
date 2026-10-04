@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/ui";
 import { readSimulatedLocation } from "@/lib/location-server";
 import { listMapPlaces } from "@/lib/queries";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Map",
