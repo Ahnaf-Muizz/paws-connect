@@ -138,7 +138,7 @@ export default async function PetPage({ params }: { params: Params }) {
             <Badge tone="neutral" className="capitalize">
               {pet.energy} energy
             </Badge>
-            <Badge tone="neutral">
+            <Badge tone="primary">
               <MapPin className="size-3.5" aria-hidden /> {pet.city} · {formatMiles(miles)}
             </Badge>
             <Badge tone="neutral">Care ~${pet.monthlyCost}/mo</Badge>

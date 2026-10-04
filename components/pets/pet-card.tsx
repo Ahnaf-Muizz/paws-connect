@@ -37,6 +37,11 @@ export function PetCard({
           className="transition duration-300 group-hover:scale-[1.03]"
         />
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+          {miles !== undefined && (
+            <Badge tone="primary" className="bg-white/95 shadow-sm dark:bg-slate-900/95">
+              {formatMiles(miles)}
+            </Badge>
+          )}
           {pet.status === "pending" && <Badge tone="warning">Adoption pending</Badge>}
           {pet.status === "adopted" && <Badge tone="success">Adopted</Badge>}
           {score !== undefined && (
