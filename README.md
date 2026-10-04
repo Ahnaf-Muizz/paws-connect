@@ -77,18 +77,18 @@ To use your Neon database locally instead, copy `.env.example` to `.env.local` a
    node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
    ```
 
-4. Create the tables and demo data from your machine:
+4. Redeploy from the dashboard (or run `vercel --prod`) so the new environment variables take effect. The build (`npm run build`) runs `lib/db/prepare.ts` first, which applies migrations and seeds the demo data if the database is empty, so no manual database setup is needed.
 
-   ```bash
-   npm i -g vercel
-   vercel login
-   vercel link
-   vercel env pull .env.local
-   npm run db:migrate
-   npm run db:seed
-   ```
+To run migrations or reseed by hand, pull the variables locally first:
 
-5. Redeploy from the dashboard (or run `vercel --prod`) so the new environment variables take effect.
+```bash
+npm i -g vercel
+vercel login
+vercel link
+vercel env pull .env.local
+npm run db:migrate
+npm run db:reset
+```
 
 After deploying, check that you can log in with the demo account, upload a photo on **Rehome**, and complete a test checkout. On a phone, use **Add to Home Screen** to install the app.
 
