@@ -21,6 +21,9 @@ export type HomeType = "apartment" | "house" | "condo" | "farm";
 export type PetStatus = "available" | "pending" | "adopted";
 export type ApplicationStatus = "submitted" | "screening" | "approved" | "declined" | "withdrawn";
 export type ProductCategory = "insurance" | "food" | "clinic" | "groomer" | "medicine";
+export type ApplicationKind = "long-term" | "short-term" | "emergency";
+export type AppointmentKind = "meet-greet" | "video" | "home-visit";
+export type AppointmentStatus = "requested" | "confirmed" | "cancelled";
 
 const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
 
@@ -175,6 +178,8 @@ export const applications = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     message: text("message").notNull(),
+    kind: text("kind").$type<ApplicationKind>().notNull().default("long-term"),
+    duration: text("duration"),
     status: text("status").$type<ApplicationStatus>().notNull().default("submitted"),
     matchScore: integer("match_score"),
     decisionNote: text("decision_note"),
@@ -191,6 +196,7 @@ export const products = pgTable("products", {
   provider: text("provider").notNull(),
   description: text("description").notNull(),
   priceCents: integer("price_cents").notNull(),
+  salePct: integer("sale_pct").notNull().default(0),
   unit: text("unit").notNull(),
   species: jsonb("species").$type<Species[]>().notNull(),
   tags: jsonb("tags").$type<string[]>().notNull().default([]),
